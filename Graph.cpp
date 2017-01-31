@@ -214,8 +214,6 @@ double Graph::MinDistanceBetween(string src, string dest)
       VerTex *adjVtx = (*adjVerEdgeit)->get_adJVertex();
       double EdgeWeight = (*adjVerEdgeit)->get_weight();
       
-      cout << "     Processing Adjacent VerTex : " << adjVtx->getName() << endl;
-      
       // Check if this adjacent vertex is alread processed or not.
       set <VerTex *> :: iterator MarkedVerticesIterator;
       MarkedVerticesIterator = MarkedVertices.find(adjVtx);
@@ -265,6 +263,176 @@ double Graph::MinDistanceBetween(string src, string dest)
   }
   
   return DistanceFromSrcVtx[destVtx];
+}
+
+/***********************************************************************************
+ * Function : PathforMinDistanceBetween
+ * Descrp   : This function implements Dijekstra's Algorithm.
+ *          : It returns path of Minimum Distance bw VerTex objects of input strings
+ * Argument : string, string
+ * *********************************************************************************/
+
+void Graph::PathforMinDistanceBetween(string src, string dest)
+{
+  VerTex *srcVtx = NULL;
+  VerTex *destVtx = NULL;
+  
+  srcVtx = GetVertexFromString(src);
+  if(srcVtx == NULL)
+  {
+    cout << "Vertex is not present in the graph" << endl;
+    return ;
+  }
+  
+  destVtx = GetVertexFromString(dest);
+  if(destVtx == NULL)
+  {
+    cout << "Vertex is not present in the graph" << endl;
+    return ;
+  }
+  
+  set<VerTex *> MarkedVertices;   // Vertice which we have already processed.
+  
+  set<VerTex *> ActiveVertices;   // Vertices which are in queue and will get processed.
+  
+  map<VerTex *, VerTex *> PrevVertexofCurrVertex;
+  
+  
+  // Below map is very important part of this Algorithm.
+  // this map contains distance of every Vertex from Source VerTex.
+  // Initially we set distance of every VerTex from Source VerTex MAXIMUM.
+  // than we update distance of each vertices from Source Vertex as we process them.
+  // At any time , if we look into the key value pair of this map than Value corresponding to 
+  // Vertex(key) represent min distance identified till now from Input Source Vertex to this VerTex.
+  
+  map<VerTex * , double> DistanceFromSrcVtx;
+  
+  for (vector<VerTex *> :: iterator it = m_Vertices.begin(); it != m_Vertices.end();it++)
+  {
+    if((*it) == srcVtx)
+    {
+      DistanceFromSrcVtx[srcVtx] = 0;
+    }
+    else
+    {
+      DistanceFromSrcVtx[(*it)] = DISTANCE_RANGE;
+    }
+  }
+  
+  MinHeap *VerticesMinHeap = NULL;    // Priority Queue Data Structure
+  
+  VerticesMinHeap = new MinHeap();
+  
+  VerticesMinHeap->AddVerTex(srcVtx,DistanceFromSrcVtx); // Adding First Element to our Priority Queue Data Structure.
+  
+  VerTex *currVtx = NULL;
+  
+  // Taking top Element of our Priority Queue DS to process.
+  currVtx = VerticesMinHeap->Top();
+  
+  PrevVertexofCurrVertex.insert(pair<VerTex *, VerTex *>(currVtx,NULL));
+  
+  while(VerticesMinHeap->size() && currVtx != destVtx)
+  {
+  
+    cout << "Processing Vrtex : " << currVtx->getName() << endl;
+    
+    VerticesMinHeap->ExtractTop(DistanceFromSrcVtx);
+    
+    // Adding Current VerTex to list of MarkedVertices which means we are done with current VerTex.
+    // We need its adjacent vertices. Also , if there is an Edge from Current VerTex to itself than
+    // it is safe to mark it done here to avoid infinte loop.
+    
+    MarkedVertices.insert(currVtx);
+    
+    // identifying adjacent Vertices of Current VerTex
+    list<Edge *> adjVerEdgeList = currVtx->adjVerticesList();
+    
+    for (list<Edge *> :: iterator adjVerEdgeit = adjVerEdgeList.begin(); adjVerEdgeit != adjVerEdgeList.end(); adjVerEdgeit++)
+    {
+      
+      VerTex *adjVtx = (*adjVerEdgeit)->get_adJVertex();
+      double EdgeWeight = (*adjVerEdgeit)->get_weight();
+      
+      // Check if this adjacent vertex is alread processed or not.
+      set <VerTex *> :: iterator MarkedVerticesIterator;
+      MarkedVerticesIterator = MarkedVertices.find(adjVtx);
+      
+      if(MarkedVerticesIterator != MarkedVertices.end())
+      {
+	// if current adjacent vertex is already marked than we need to work with next adjacent vertex.
+	continue;
+      }
+      
+      // Check if this adjacent vertex is already encountered or not.
+      set <VerTex *> :: iterator ActiveVerticesIterator;
+      ActiveVerticesIterator = ActiveVertices.find(adjVtx);
+      
+      if(ActiveVerticesIterator == ActiveVertices.end())
+      {
+	// If Not than update its distance from Source Vertex and add it to Priority Queue which in our case is Min Heap.
+	// It keeps Vertex at top whose distance is Minimum from Source Vertex at any moment.
+	
+	DistanceFromSrcVtx[adjVtx] = DistanceFromSrcVtx[currVtx] + EdgeWeight;
+	
+	VerticesMinHeap->AddVerTex(adjVtx,DistanceFromSrcVtx);
+	
+	PrevVertexofCurrVertex.insert(pair<VerTex *, VerTex *>(adjVtx,currVtx));
+	ActiveVertices.insert(adjVtx);
+	
+      }
+      else
+      {
+	// If yes than check whether we need to update its distance from Source Vtx or Not.
+	// if we need to update this than we update our Priority Queue also to have Min
+	// Distance VerTex at top.
+	if(DistanceFromSrcVtx[currVtx]+EdgeWeight < DistanceFromSrcVtx[adjVtx])
+	{
+	  DistanceFromSrcVtx[adjVtx] = DistanceFromSrcVtx[currVtx]+EdgeWeight;
+	  map<VerTex *, VerTex*> :: iterator it = PrevVertexofCurrVertex.find(adjVtx);
+	  if(it == PrevVertexofCurrVertex.end())
+	  {
+	    cout << "This Should Not be the case. There is something wrong" << endl;
+	    return;
+	  }
+	  else
+	  {
+	    PrevVertexofCurrVertex[adjVtx] = currVtx;
+	  }
+	  VerticesMinHeap->UpdateHeap(DistanceFromSrcVtx);
+	}
+      }
+    }
+    
+    currVtx = VerticesMinHeap->Top();
+    if(currVtx == NULL)
+    {
+      cout << " We Can Not Reach from Source to Destination Vertex" << endl;
+      return ;
+    
+    }
+  }
+  VerTex * temp = NULL;
+  temp = PrevVertexofCurrVertex[destVtx];
+  cout << destVtx->getName()<< "<-------";
+  while(temp)
+  {
+    cout << temp->getName();
+    
+    temp = PrevVertexofCurrVertex[temp];
+    if(temp)
+    {
+      if(temp == srcVtx)
+      {
+	cout << "<-------" << temp->getName();
+	break;
+      }
+      else
+	cout << "<-------";
+    }
+  }
+  return ;
+  
 }
 
 

@@ -9,7 +9,7 @@ using namespace std;
 
 #define EDGE_DENSITY 2147483647 // MAX POSITIVE VALUE FOR AN 4 BYTE INTEGER
 
-#define ALPHBET_RANGE 6        // Considering 26 Alphabets from A to Z as our vertices
+#define ALPHBET_RANGE 26        // Considering 26 Alphabets from A to Z as our vertices
 
 int main(int argc, char **argv) 
 {  
@@ -54,7 +54,9 @@ int main(int argc, char **argv)
     
     graph->PrintGraph();
     
-    cout << graph->MinDistanceBetween("A","F");
+    cout << graph->MinDistanceBetween("A","H") << endl;
+    
+    graph->PathforMinDistanceBetween("A","H");
     
     cout << endl;
     

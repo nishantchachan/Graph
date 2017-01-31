@@ -126,7 +126,6 @@ void MinHeap::AddVerTex(VerTex* a_vertex, std::map< VerTex*, double >& a_distanc
     
   }
   VerTex *top = Top();
-  cout << "     At Top :" << top->getName() << endl;
 }
 
 
@@ -167,9 +166,6 @@ void MinHeap::ExtractTop(std::map< VerTex*, double >& a_distance)
   
   Heapify(0, a_distance); 
   
-  VerTex *top = Top();
-  cout << "     At Top :" << top->getName() << endl;
-  
 }
 
 void MinHeap::UpdateHeap(std::map< VerTex*, double >& a_distance)
@@ -186,6 +182,4 @@ void MinHeap::UpdateHeap(std::map< VerTex*, double >& a_distance)
   {
     Heapify(ix, a_distance);
   }
-  VerTex *top = Top();
-  cout << "     At Top :" << top->getName() << endl;
 }

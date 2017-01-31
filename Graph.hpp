@@ -35,6 +35,8 @@ public :
   
   double MinDistanceBetween(string src, string dest);
   
+  void   PathforMinDistanceBetween(string src, string dest);
+  
   VerTex * GetVertexFromString(string src);
   
   inline int NumberOfVertices(){
