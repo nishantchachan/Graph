@@ -31,6 +31,32 @@ void Graph::AddVertex(string a_label)
   
 }
 
+void Graph::RandomGraph(int edgedensity, int distancerange)
+{
+  for(int ix = 0; ix < NumberOfVertices(); ix++)
+  {
+    for(int jx = 0; jx< NumberOfVertices(); jx++)
+    {
+      if(ix != jx)   // We do not want add Edge on same vertex
+      {
+	if(((rand())%edgedensity) < (edgedensity/10))
+	{
+	  char c = ix+65;
+	  string firstVertex(1,c);  // As I have made "A" to "Z" , 26 different Vertices so identifying current VerTex.
+	  
+	  c = jx+65;
+	  string secondVertex(1,c);
+	  
+	  cout << "First Vertex is : " << firstVertex << " and Second Vertex is : "<< secondVertex << endl;
+	  AddEdge(firstVertex, secondVertex, rand()% distancerange);
+	  
+	}
+      }
+    }
+  }
+}
+
+
 /***********************************************************************************
  * Function : PrintGraph
  * Descrp   : This function Prints the current vertices in the graph and 
@@ -177,7 +203,7 @@ double Graph::MinDistanceBetween(string src, string dest)
     }
     else
     {
-      DistanceFromSrcVtx[(*it)] = DISTANCE_RANGE;
+      DistanceFromSrcVtx[(*it)] = MAX_RANGE;
     }
   }
   
@@ -194,8 +220,6 @@ double Graph::MinDistanceBetween(string src, string dest)
   
   while(VerticesMinHeap->size() && currVtx != destVtx)
   {
-  
-    cout << "Processing Vrtex : " << currVtx->getName() << endl;
     
     VerticesMinHeap->ExtractTop(DistanceFromSrcVtx);
     
@@ -272,7 +296,7 @@ double Graph::MinDistanceBetween(string src, string dest)
  * Argument : string, string
  * *********************************************************************************/
 
-void Graph::PathforMinDistanceBetween(string src, string dest)
+bool Graph::PathforMinDistanceBetween(string src, string dest)
 {
   VerTex *srcVtx = NULL;
   VerTex *destVtx = NULL;
@@ -281,14 +305,14 @@ void Graph::PathforMinDistanceBetween(string src, string dest)
   if(srcVtx == NULL)
   {
     cout << "Vertex is not present in the graph" << endl;
-    return ;
+    return false;
   }
   
   destVtx = GetVertexFromString(dest);
   if(destVtx == NULL)
   {
     cout << "Vertex is not present in the graph" << endl;
-    return ;
+    return false;
   }
   
   set<VerTex *> MarkedVertices;   // Vertice which we have already processed.
@@ -315,7 +339,7 @@ void Graph::PathforMinDistanceBetween(string src, string dest)
     }
     else
     {
-      DistanceFromSrcVtx[(*it)] = DISTANCE_RANGE;
+      DistanceFromSrcVtx[(*it)] = MAX_RANGE;
     }
   }
   
@@ -334,8 +358,6 @@ void Graph::PathforMinDistanceBetween(string src, string dest)
   
   while(VerticesMinHeap->size() && currVtx != destVtx)
   {
-  
-    cout << "Processing Vrtex : " << currVtx->getName() << endl;
     
     VerticesMinHeap->ExtractTop(DistanceFromSrcVtx);
     
@@ -393,7 +415,7 @@ void Graph::PathforMinDistanceBetween(string src, string dest)
 	  if(it == PrevVertexofCurrVertex.end())
 	  {
 	    cout << "This Should Not be the case. There is something wrong" << endl;
-	    return;
+	    return false;
 	  }
 	  else
 	  {
@@ -408,7 +430,7 @@ void Graph::PathforMinDistanceBetween(string src, string dest)
     if(currVtx == NULL)
     {
       cout << " We Can Not Reach from Source to Destination Vertex" << endl;
-      return ;
+      return false;
     
     }
   }
@@ -431,7 +453,7 @@ void Graph::PathforMinDistanceBetween(string src, string dest)
 	cout << "<-------";
     }
   }
-  return ;
+  return true;
   
 }
 

@@ -7,7 +7,7 @@
 #include "Vertex.hpp"
 #include "MinHeap.hpp"
 
-#define DISTANCE_RANGE 500      // MAX VALUE FOR AN EDGE WEIGHT
+#define MAX_RANGE 10000        // MAX RANGE is maximum EDGE cost possible 
 
 class VerTex;
 
@@ -21,23 +21,25 @@ public :
   
   virtual ~Graph();
   
-  void AddVertex(string a_label);
+  void 		AddVertex(string a_label);
   
-  virtual void AddEdge(string src, string dest, double w =0) = 0 ;
+  virtual void 	AddEdge(string src, string dest, double w =0) = 0 ;
   
-  virtual void RemoveEdge(string src, string dest) = 0;
+  virtual void 	RemoveEdge(string src, string dest) = 0;
   
-  void PrintAdjacent(string src);
+  void		PrintAdjacent(string src);
   
-  void PrintGraph();
+  void 		PrintGraph();
   
-  double DistanceInBetween(string src, string dest);
+  double 	DistanceInBetween(string src, string dest);
   
-  double MinDistanceBetween(string src, string dest);
+  double 	MinDistanceBetween(string src, string dest);
   
-  void   PathforMinDistanceBetween(string src, string dest);
+  bool   	PathforMinDistanceBetween(string src, string dest);
   
-  VerTex * GetVertexFromString(string src);
+  void 		RandomGraph(int edgedensity, int distancerange);
+  
+  VerTex * 	GetVertexFromString(string src);
   
   inline int NumberOfVertices(){
     return m_Vertices.size();

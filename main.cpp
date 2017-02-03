@@ -7,8 +7,6 @@
 using namespace std;
 
 
-#define EDGE_DENSITY 2147483647 // MAX POSITIVE VALUE FOR AN 4 BYTE INTEGER
-
 #define ALPHBET_RANGE 26        // Considering 26 Alphabets from A to Z as our vertices
 
 int main(int argc, char **argv) 
@@ -29,36 +27,34 @@ int main(int argc, char **argv)
       graph->AddVertex(s);
     }
     
-    // Below is a loop used for creating edges b/w Vertices of our graph.
-    
-    for(int ix = 0; ix < graph->NumberOfVertices(); ix++)
-    {
-      for(int jx = 0; jx<graph->NumberOfVertices(); jx++)
-      {
-	if(ix != jx)
-	{
-	  if((rand()) < (EDGE_DENSITY/10))
-	  {
-	    char c = ix+65;
-	    string firstVertex(1,c);
-	    c = jx+65;
-	    string secondVertex(1,c);
-	    
-	    cout << "First Vertex is : " << firstVertex << " and Second Vertex is : "<< secondVertex << endl;
-	    graph->AddEdge(firstVertex, secondVertex, rand()%DISTANCE_RANGE);
-	    
-	  }
-	}
-      }
-    }
+    graph->RandomGraph(100,10);
     
     graph->PrintGraph();
     
-    cout << graph->MinDistanceBetween("A","H") << endl;
+    double AvgPathLength = 0.0;
+    int VerticeToConsiderInShortesPathCalculation = graph->NumberOfVertices();
     
-    graph->PathforMinDistanceBetween("A","H");
-    
-    cout << endl;
-    
+    // below is calculation for average shortest path length from Vertex "A" to rest of vertices
+    for(int ix = 1 ; ix < graph->NumberOfVertices();ix++)
+    {  
+      double ShortestPathLength = 0;
+      char c = ix+65;
+      string secondVertex(1,c);
+      
+      ShortestPathLength = graph->MinDistanceBetween("A",secondVertex);
+      AvgPathLength += ShortestPathLength;
+      
+      cout << "Shortest path Length B/w Vertex A and Vetex " << secondVertex << " is :" << ShortestPathLength << endl;
+      cout << "And path for this Shortest length is : " ; 
+      if(graph->PathforMinDistanceBetween("A",secondVertex) == false)
+      {
+	VerticeToConsiderInShortesPathCalculation--;
+      }
+      cout << endl;
+    }
+    cout << "Total Length is : " << AvgPathLength << endl;
+    cout << " vertices to Consider : " << VerticeToConsiderInShortesPathCalculation << endl;
+    cout << "Avg Shortest path length is : "<< (AvgPathLength)/VerticeToConsiderInShortesPathCalculation << endl;
+ 
     return 0;
 }

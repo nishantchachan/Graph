@@ -125,7 +125,6 @@ void MinHeap::AddVerTex(VerTex* a_vertex, std::map< VerTex*, double >& a_distanc
     }
     
   }
-  VerTex *top = Top();
 }
 
 
