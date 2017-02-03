@@ -319,8 +319,6 @@ bool Graph::PathforMinDistanceBetween(string src, string dest)
   
   set<VerTex *> ActiveVertices;   // Vertices which are in queue and will get processed.
   
-  map<VerTex *, VerTex *> PrevVertexofCurrVertex;
-  
   
   // Below map is very important part of this Algorithm.
   // this map contains distance of every Vertex from Source VerTex.
@@ -330,6 +328,12 @@ bool Graph::PathforMinDistanceBetween(string src, string dest)
   // Vertex(key) represent min distance identified till now from Input Source Vertex to this VerTex.
   
   map<VerTex * , double> DistanceFromSrcVtx;
+  
+  // Below Map contains Information of previous minimum distance node from Source Vertex from which we have 
+  // come to current Node.
+  // This Information is useful as we can track the path by reverse iterating from Destination Vertex to 
+  // Source.
+  map<VerTex *, VerTex *> PrevVertexofCurrVertex;
   
   for (vector<VerTex *> :: iterator it = m_Vertices.begin(); it != m_Vertices.end();it++)
   {
